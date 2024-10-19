@@ -1,99 +1,61 @@
-export default class Servico{
+import Servico from "../Model/Servico.js";
 
-    #id
-    #nome
-    #descricao
-    #valor
-    #urlImagem
-    //SLA
-    #tempoInicioAtendimento
-    #tempoSolucao
-    
-    constructor(id=0, nome, descricao, tempoInicioAtendimento=4, tempoSolucao=24){
-        this.#id=id;
-        this.#nome=this.nome;
-        this.#descricao=descricao;
-        this.#valor=this.valor;
-        this.#urlImagem=this.urlImage;
-        this.#tempoInicioAtendimento=tempoInicioAtendimento;
-        this.#tempoSolucao=tempoSolucao;
-       
-    }
-    get id(){
-        return this.#id;
-    }
+export default class ServicoCtrl {
+    //traduzir comandos http em ações negociais
+    //Conceito REST 
+    //Considerar o protocolo HTTP 
 
-    set id(novoId){
-        this.#id = novoId;
-    }
+    gravar(requisicao, resposta) {
+        if (requisicao.method = "POST" &&
+            requisicao.is("application/json")) {
+            const dados = requisicao.body;
+            //pseudo validação
+            if (dados.nome && dados.descricao && dados.valor >= 0 &&
+                dados.urlImagem && dados.tempoInicioAtendimento > 0 &&
+                dados.tempoSolucao > 0) {
+                const servico = new Servico(0,dados.nome,dados.descricao,
+                                            dados.valor,dados.urlImagem,
+                                            dados.tempoInicioAtendimento,
+                                            dados.tempoSolucao);
+            
+                servico.gravar().then(()=>{
+                    resposta.status(201).json({
+                        "status": true,
+                        "mensagem": "Serviço gravado com sucesso!",
+                        "id":servico.id
+                    });    
+                }).catch((erro) => {
+                    resposta.status(500).json({
+                        "status": false,
+                        "mensagem": "Erro ao registrar o serviço: " + erro.message,
+                    });
+                })    
+            }
+            else {
+                resposta.status(400).json({
+                    "status": false,
+                    "mensagem": "Informe todos os dados necessários conforme documentação!"
+                });
+            }
 
-    get nome(){
-        return this.#nome;
-    }
-
-    set nome(novoNome){
-        this.#nome = novoNome;
-    }
-
-    get descricao() {
-        return this.#descricao;
-    }
-
-    set descricao(value) {
-        this.#descricao = value;
-    }
-
-    get valor() {
-        return this.#valor;
-    }
-
-    set valor(value) {
-        this.#valor = value;
-    }
-
-    get urlImage() {
-        return this.#urlImagem;
-    }
-
-    set urlImage(value) {
-        this.#urlImagem = value;
-    }
-
-    get tempoInicioAtendimento() {
-        return this.#tempoInicioAtendimento;
-    }
-
-    set tempoInicioAtendimento(value) {
-        this.#tempoInicioAtendimento = value;
-    }
-
-    get tempoSolucao() {
-        return this.#tempoSolucao;
-    }
-
-    set tempoSolucao(value) {
-        this.#tempoSolucao = value;
-    }
-
-    //override
-    toJson(){
-        return {
-            id: this.#id,
-            nome: this.#nome,
-            descricao: this.#descricao,
-            valor: this.#valor,
-            urlImage: this.#urlImagem,
-            tempoInicioAtendimento: this.#tempoInicioAtendimento,
-            tempoSolucao: this.#tempoSolucao
+        }
+        else {
+            resposta.status(400).json({
+                "status": false,
+                "mensagem": "Formato não permitido!"
+            });
         }
     }
+}
 
-    async gravar(){}
+alterar(requisicao, resposta){
 
-    async alterar(){}
+}
 
-    async excluir(){}
+excluir(requisicao, resposta){
 
-    async consulta(){}
+}
+
+consultar(requisicao, resposta){
 
 }
